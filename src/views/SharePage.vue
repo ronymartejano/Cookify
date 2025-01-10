@@ -1,21 +1,21 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="#FFF8DC" elevate-on-scroll sticky style="z-index: 20">
+    <v-app-bar app color="#c8e6c9" elevate-on-scroll sticky style="z-index: 20">
       <v-toolbar-title>
         <div class="d-flex align-center">
-          <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
+          <v-icon size="24" color="green">mdi-leaf</v-icon>
           <span
             class="font-weight-bold"
             style="
-              color: black;
+              color: #3e4e3a;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;
               overflow: visible;
             "
           >
-            CooKify
+            Campus Nourish
           </span>
         </div>
       </v-toolbar-title>
@@ -35,7 +35,7 @@
     </v-app-bar>
 
     <!-- Sidebar Drawer -->
-    <v-navigation-drawer v-model="drawer" app temporary color="#FFF8DC" left>
+    <v-navigation-drawer v-model="drawer" app temporary color="#c8e6c9" left>
       <v-list>
         <v-list-item to="/home">
           <v-list-item-title>Home</v-list-item-title>
@@ -90,11 +90,7 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="2" lg="1">
-                <v-btn
-                  :color="newIngredient ? 'yellow' : '#FFFFF0'"
-                  :disabled="!newIngredient"
-                  @click="addIngredient"
-                >
+                <v-btn color="success" :disabled="!newIngredient" @click="addIngredient">
                   Add
                 </v-btn>
               </v-col>
@@ -128,13 +124,7 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="2" lg="1">
-                <v-btn
-                  :color="newStep ? 'yellow' : '#FFFFF0'"
-                  :disabled="!newStep"
-                  @click="addStep"
-                >
-                  Add
-                </v-btn>
+                <v-btn color="success" :disabled="!newStep" @click="addStep"> Add </v-btn>
               </v-col>
             </v-row>
 
@@ -153,16 +143,6 @@
             </ol>
           </div>
 
-          <!-- Image Upload -->
-          <v-file-input
-            label="Recipe Image"
-            v-model="newRecipe.image"
-            accept="image/*"
-            :rules="[rules.required]"
-            outlined
-            dense
-          ></v-file-input>
-
           <v-text-field
             label="Preparation Time"
             v-model="newRecipe.prep_time"
@@ -180,11 +160,7 @@
             type="number"
           ></v-text-field>
 
-          <v-btn
-            :color="isFormValid ? 'yellow' : '#FFFFF0'"
-            type="submit"
-            :disabled="!isFormValid"
-          >
+          <v-btn color="success" type="submit" :disabled="!isFormValid">
             Add Recipe
           </v-btn>
         </v-form>
@@ -194,12 +170,13 @@
 </template>
 
 <script>
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils/supabase"; // Adjust the import path as necessary
 
 export default {
   name: "SharePage",
   data() {
     return {
+      drawer: false,
       newRecipe: {
         title: "",
         description: "",
@@ -207,15 +184,17 @@ export default {
         steps: [],
         prep_time: "",
         cost: "",
-        image: null, // Image file
       },
       newIngredient: "",
       newStep: "",
-      isFormValid: false,
+      isFormValid: false, // Tracks form validity
       rules: {
         required: (value) => !!value || "This field is required.",
         isNumber: (value) =>
           (!isNaN(parseFloat(value)) && isFinite(value)) || "Must be a valid number.",
+        maxLength: (max) => (value) =>
+          value?.length <= max || `Max ${max} characters allowed.`,
+        positiveNumber: (value) => parseFloat(value) > 0 || "Must be a positive number.",
       },
     };
   },
@@ -238,56 +217,39 @@ export default {
     removeStep(index) {
       this.newRecipe.steps.splice(index, 1);
     },
-    async uploadImage() {
-      if (!this.newRecipe.image) return null;
-
-      const file = this.newRecipe.image;
-      const fileName = `${Date.now()}-${file.name}`;
-
-      const { data, error } = await supabase.storage
-        .from("recipes_images")
-        .upload(fileName, file);
-
-      if (error) {
-        console.error("Image upload error:", error.message);
-        throw new Error("Failed to upload image.");
-      }
-
-      // Get the public URL from the uploaded file
-      const { data: publicUrlData, error: urlError } = supabase.storage
-        .from("recipes_images")
-        .getPublicUrl(fileName);
-
-      if (urlError) {
-        console.error("Error generating public URL:", urlError.message);
-        throw new Error("Failed to generate image URL.");
-      }
-
-      return publicUrlData.publicUrl; // Correct way to access the URL
-    },
     async addRecipe() {
       try {
-        // Step 1: Upload the image
-        const imageUrl = await this.uploadImage();
+        // Step 1: Check for cooldown in localStorage
+        const cooldownKey = "addRecipeCooldown";
+        const lastAddedTimestamp = localStorage.getItem(cooldownKey);
+        const currentTimestamp = Date.now();
 
-        // Step 2: Get the logged-in user's ID
+        if (lastAddedTimestamp && currentTimestamp - lastAddedTimestamp < 60000) {
+          const remainingTime = Math.ceil(
+            (60000 - (currentTimestamp - lastAddedTimestamp)) / 1000
+          );
+          alert(`Please wait ${remainingTime} seconds before adding another recipe.`);
+          return;
+        }
+
+        // Step 2: Get the logged-in user's ID from `auth.users`
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
 
         const userId = userData.user.id;
 
-        // Step 3: Fetch `users_info.id` based on `auth_users_id`
+        // Step 3: Fetch `users_info.id` associated with the current user
         const { data: userInfo, error: userInfoError } = await supabase
           .from("users_info")
           .select("id")
-          .eq("auth_users_id", userId) // Correct column for joining
+          .eq("user_id", userId)
           .single();
 
         if (userInfoError) throw userInfoError;
 
         const usersInfoId = userInfo.id;
 
-        // Step 4: Insert the recipe
+        // Step 4: Insert the recipe into the `recipes` table with `users_info_id`
         const { error: recipeError } = await supabase.from("recipes").insert([
           {
             title: this.newRecipe.title,
@@ -296,14 +258,13 @@ export default {
             steps: this.newRecipe.steps,
             prep_time: this.newRecipe.prep_time,
             cost: parseFloat(this.newRecipe.cost),
-            users_info_id: usersInfoId, // Correct ID reference
-            image_url: imageUrl, // Add the image URL
+            users_info_id: usersInfoId, // Add `users_info_id` to the recipe
           },
         ]);
 
         if (recipeError) throw recipeError;
 
-        // Reset the form
+        // Step 5: Reset the form
         this.newRecipe = {
           title: "",
           description: "",
@@ -311,8 +272,10 @@ export default {
           steps: [],
           prep_time: "",
           cost: "",
-          image: null,
         };
+
+        // Step 6: Set cooldown in localStorage
+        localStorage.setItem(cooldownKey, Date.now());
 
         alert("Recipe added successfully!");
       } catch (error) {
