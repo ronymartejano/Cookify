@@ -76,7 +76,7 @@ const onSubmit = async () => {
       })
 
       // Redirect after 3 seconds
-      setTimeout(() => router.push({ name: 'login' }), 3000)
+      setTimeout(() => router.push({ name: 'dashboard' }), 3000)
     }
   } catch (err) {
     formAction.value.formErrorMessage = 'An error occurred. Please try again later.'

@@ -53,7 +53,7 @@ const handleLogin = async () => {
       formAction.value.formErrorMessage = error.message || 'Invalid login credentials.'
     } else if (data) {
       formAction.value.formSuccessMessage = 'Login successful! Redirecting...'
-      setTimeout(() => router.push({ name: 'home' }), 1500)
+      setTimeout(() => router.push({ name: 'dashboard' }), 1500)
     }
   } catch {
     formAction.value.formErrorMessage = 'An error occurred. Please try again later.'
