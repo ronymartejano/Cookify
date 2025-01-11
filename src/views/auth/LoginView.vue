@@ -265,7 +265,7 @@ const onFormSubmit = () => {
                 <router-link
                   to="/register"
                   class="register-link"
-                  style="font-weight: bold; color: #e4d00a"
+                  style="font-weight: bold; color: #e1c16e"
                   >Click here to Register</router-link
                 >
               </div>

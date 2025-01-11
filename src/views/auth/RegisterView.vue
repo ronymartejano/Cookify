@@ -252,7 +252,7 @@
                 <router-link
                   to="/login"
                   class="login-link"
-                  style="font-weight: bold; color: #e4d00a"
+                  style="font-weight: bold; color: #e1c16e"
                 >
                   Click here to Login
                 </router-link>
