@@ -72,7 +72,7 @@
     <!-- Main Content -->
     <v-main
       style="
-        background-image: url('/src/assets/images/bgpreview.jpg');
+        background-image: url('@/src/assets/images/bgpreview.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;

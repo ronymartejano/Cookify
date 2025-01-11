@@ -59,7 +59,7 @@
 
     <v-main
       style="
-        background-image: url('/src/assets/images/bgunlock.jpg');
+        background-image: url('@/src/assets/images/bgunlock.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
