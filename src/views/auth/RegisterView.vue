@@ -268,10 +268,11 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import AppLayout from "@/components/layout/AppLayout.vue";
 import { useDisplay } from "vuetify";
+import cookifyImage from "@/assets/images/cookifybr2.png";
 import { supabase } from "@/utils/supabase";
 import AlertNotification from "@/components/common/AlertNotification.vue";
-import cookifyImage from "@/assets/images/cookifybr2.png";
 import {
   requiredValidator,
   emailValidator,
@@ -279,10 +280,13 @@ import {
   confirmedValidator,
 } from "@/utils/validators";
 
-const drawer = ref(false);
+// Mobile responsiveness
 const { mobile } = useDisplay();
+
+// Router instance
 const router = useRouter();
 
+// Form references and defaults
 const refVForm = ref();
 const formData = ref({
   FirstName: "",
@@ -297,16 +301,87 @@ const formAction = ref({
   formSuccessMessage: "",
 });
 
+// Password visibility toggles
 const isPasswordVisible = ref(false);
 const isConfirmPasswordVisible = ref(false);
 
+// Handle form submission
 const onSubmit = async () => {
-  // Same logic as your script
+  // Reset the form process state
+  formAction.value = { formProcess: true, formErrorMessage: "", formSuccessMessage: "" };
+
+  try {
+    // Sign up the user
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.value.email,
+      password: formData.value.password,
+      options: {
+        data: {
+          FirstName: formData.value.FirstName,
+          LastName: formData.value.LastName,
+        },
+      },
+    });
+
+    if (error) {
+      // Display error messages if registration fails
+      formAction.value.formErrorMessage = error.message;
+      console.error("Error during registration:", error);
+      return;
+    }
+
+    // Extract user ID after successful registration
+    const userId = data?.user?.id;
+    if (userId) {
+      // Insert FirstName and LastName into users_info table
+      const { error: insertError } = await supabase.from("users_info").insert({
+        auth_users_id: userId,
+        first_name: formData.value.FirstName,
+        last_name: formData.value.LastName,
+      });
+
+      if (insertError) {
+        console.error("Error inserting into users_info:", insertError);
+        formAction.value.formErrorMessage = "Error saving additional user info.";
+        return;
+      }
+
+      // Success message
+      formAction.value.formSuccessMessage = "Registration successful! Redirecting...";
+
+      // 1. Reset validation state before clearing form data
+      refVForm.value.resetValidation();
+
+      // 2. Clear form data
+      Object.assign(formData.value, {
+        FirstName: "",
+        LastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      // Redirect after 3 seconds
+      setTimeout(() => router.push({ name: "loginpage" }), 3000);
+    } else {
+      formAction.value.formErrorMessage = "Error retrieving user ID.";
+    }
+  } catch (err) {
+    formAction.value.formErrorMessage = "An error occurred. Please try again later.";
+    console.error("Unexpected error:", err);
+  } finally {
+    formAction.value.formProcess = false;
+  }
 };
 
+// Validate and Submit Form
 const onFormSubmit = async () => {
   const valid = await refVForm.value.validate();
-  if (valid) await onSubmit();
-  else formAction.value.formErrorMessage = "Please fix form errors before submitting.";
+  if (valid) {
+    await onSubmit();
+  } else {
+    formAction.value.formErrorMessage =
+      "Please correct the errors in the form before submitting.";
+  }
 };
 </script>

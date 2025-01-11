@@ -1,21 +1,21 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="#c8e6c9" elevate-on-scroll sticky style="z-index: 20">
+    <v-app-bar app color="#FFF8DC" elevate-on-scroll sticky style="z-index: 20">
       <v-toolbar-title>
         <div class="d-flex align-center">
-          <v-icon size="24" color="green">mdi-leaf</v-icon>
+          <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
           <span
             class="font-weight-bold"
             style="
-              color: #3e4e3a;
+              color: black;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;
               overflow: visible;
             "
           >
-            Campus Nourish
+            CooKify
           </span>
         </div>
       </v-toolbar-title>
@@ -23,9 +23,9 @@
 
       <!-- Show buttons for larger screens -->
       <div class="d-none d-md-flex">
-        <v-btn text to="/home">Home</v-btn>
+        <v-btn text to="/homepage">Home</v-btn>
         <v-btn text to="/profile">Profile</v-btn>
-        <v-btn text to="/share">Share</v-btn>
+        <v-btn text to="/sharepage">Share</v-btn>
       </div>
 
       <!-- Hamburger menu for smaller screens -->
@@ -35,15 +35,15 @@
     </v-app-bar>
 
     <!-- Sidebar Drawer -->
-    <v-navigation-drawer v-model="drawer" app temporary color="#c8e6c9" left>
+    <v-navigation-drawer v-model="drawer" app temporary color="#FFF8DC" left>
       <v-list>
-        <v-list-item to="/home">
+        <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
         <v-list-item to="/profile">
           <v-list-item-title>Profile</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/share">
+        <v-list-item to="/sharepage">
           <v-list-item-title>Share</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -74,15 +74,9 @@
                 <!-- Name Section -->
                 <v-row align="center" dense>
                   <v-col>
-                    <h4 class="m-0"><b>Name: </b>{{ user.name }}</h4>
-                  </v-col>
-                </v-row>
-                <!-- Phone Section -->
-                <v-row align="center" dense>
-                  <v-col>
-                    <p class="text-subtitle-1 m-0">
-                      <b>Phone Number: </b>{{ user.phone }}
-                    </p>
+                    <h4 class="m-0">
+                      <b>Name: </b>{{ user.first_name }} {{ user.last_name }}
+                    </h4>
                   </v-col>
                 </v-row>
                 <v-btn @click="openEditModal"> Edit User Profile </v-btn>
@@ -101,13 +95,13 @@
                 <v-card-text>
                   <v-form ref="editForm" v-model="isFormValid">
                     <v-text-field
-                      v-model="editData.fullname"
-                      label="Full Name"
+                      v-model="editData.first_name"
+                      label="First Name"
                       required
                     ></v-text-field>
                     <v-text-field
-                      v-model="editData.phone"
-                      label="Phone Number"
+                      v-model="editData.last_name"
+                      label="Last Name"
                       required
                     ></v-text-field>
                   </v-form>
@@ -124,33 +118,99 @@
           <!-- Right: Recipe Section -->
           <v-col cols="12" md="8" class="recipe-section">
             <div class="recipe-container">
+              <v-card-title><h3>Posts</h3></v-card-title>
               <v-row dense>
-                <v-col
-                  v-for="recipe in filteredRecipes"
-                  :key="recipe.id"
-                  cols="12"
-                  md="10"
-                  lg="6"
-                >
-                  <v-card class="pa-4" outlined>
-                    <v-card-title
-                      class="font-weight-bold d-flex align-center justify-space-between"
-                    >
-                      <span class="text-small">Made by: {{ recipe.userName }}</span>
-                      <v-btn color="red" dark small @click="deleteRecipe(recipe)">
-                        Delete
-                      </v-btn>
+                <!-- Check if there are any recipes -->
+                <template v-if="filteredRecipes.length > 0">
+                  <v-col
+                    v-for="recipe in filteredRecipes"
+                    :key="recipe.id"
+                    cols="12"
+                    md="10"
+                    lg="6"
+                  >
+                    <v-card class="pa-4" outlined>
+                      <v-card-text
+                        class="font-weight-bold d-flex align-center justify-space-between"
+                      >
+                        <v-btn color="red" dark small @click="deleteRecipe(recipe)">
+                          <v-icon>mdi-trash-can-outline</v-icon>
+                        </v-btn>
+                      </v-card-text>
+                      <hr />
+                      <v-card-text class="recipe-card">
+                        <div class="recipe-content mb-4">
+                          <img :src="recipe.image_url" height="200px" width="200px" />
+                        </div>
+                        <h3>{{ recipe.title }}</h3>
+                        <h4 class="text-small">Made by: {{ recipe.userName }}</h4>
+                      </v-card-text>
+
+                      <!-- Two flex buttons -->
+                      <div class="d-flex justify-space-between mt-4 mb-2">
+                        <v-btn
+                          color="green"
+                          dark
+                          style="width: 48%"
+                          @click="openModal(recipe)"
+                        >
+                          View Reviews
+                        </v-btn>
+                        <v-btn
+                          color="blue"
+                          dark
+                          style="width: 48%"
+                          @click="openAddReviewModal(recipe)"
+                        >
+                          Add Review
+                        </v-btn>
+                      </div>
+
+                      <!-- View Details Button -->
+                      <div class="d-flex justify-center">
+                        <v-btn
+                          color="blue"
+                          dark
+                          style="width: 100%"
+                          @click="openDetailsDialog(recipe)"
+                        >
+                          View Details
+                        </v-btn>
+                      </div>
+                    </v-card>
+                  </v-col>
+                </template>
+
+                <!-- If no recipes are found -->
+                <template v-else>
+                  <v-col cols="12" class="text-center">
+                    <p>
+                      No posts shared to Cookify. Click the share page now to share your
+                      ideas!
+                    </p>
+                  </v-col>
+                </template>
+
+                <!-- Dialog for View Details -->
+                <v-dialog v-model="isDetailsDialogOpen" max-width="600px">
+                  <v-card class="pa-4">
+                    <!-- Center the image -->
+                    <div class="d-flex justify-center mb-4">
+                      <img
+                        :src="selectedRecipe?.image_url"
+                        alt="Recipe Image"
+                        height="200px"
+                      />
+                    </div>
+                    <v-card-title class="font-weight-bold">
+                      {{ selectedRecipe?.title }}
                     </v-card-title>
-                    <hr />
-                    <v-card-title class="font-weight-bold">{{
-                      recipe.title
-                    }}</v-card-title>
-                    <v-card-subtitle>{{ recipe.description }}</v-card-subtitle>
+                    <v-card-text>{{ selectedRecipe?.description }}</v-card-text>
                     <v-card-text>
                       <div><strong>Ingredients:</strong></div>
                       <ul>
                         <li
-                          v-for="(ingredient, index) in recipe.ingredients"
+                          v-for="(ingredient, index) in selectedRecipe?.ingredients"
                           :key="index"
                         >
                           {{ ingredient }}
@@ -158,23 +218,23 @@
                       </ul>
                       <div><strong>Steps:</strong></div>
                       <ol>
-                        <li v-for="(step, index) in recipe.steps" :key="index">
+                        <li v-for="(step, index) in selectedRecipe?.steps" :key="index">
                           {{ step }}
                         </li>
                       </ol>
-                      <div><strong>Preparation Time:</strong> {{ recipe.prep_time }}</div>
-                      <div><strong>Cost:</strong> ${{ recipe.cost }}</div>
+                      <div>
+                        <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
+                      </div>
+                      <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
                     </v-card-text>
-                    <div class="d-flex justify-space-evenly mt-4">
-                      <v-btn color="green" dark @click="openModal(recipe)">
-                        View Reviews
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="red" @click="isDetailsDialogOpen = false">
+                        Close
                       </v-btn>
-                      <v-btn color="blue" dark @click="openAddReviewModal(recipe)">
-                        Add Review
-                      </v-btn>
-                    </div>
+                    </v-card-actions>
                   </v-card>
-                </v-col>
+                </v-dialog>
 
                 <!-- Modal for reviews -->
                 <v-dialog v-model="isModalOpen" max-width="600px">
@@ -190,29 +250,27 @@
                           cols="12"
                         >
                           <div class="mb-2">
-                            <strong>{{ review.userName }}</strong>
+                            <strong
+                              >{{ review.first_name }} {{ review.first_name }}</strong
+                            >
                           </div>
-
                           <v-row>
-                            <v-col cols="12"
-                              ><strong>Type:</strong> {{ review.type }}</v-col
-                            >
-                            <v-col cols="12"
-                              ><strong>Tag:</strong> {{ review.tag_name }}</v-col
-                            >
-                            <v-col cols="12">
-                              <strong>Comment:</strong> {{ review.comment_text }}
+                            <v-col cols="12" class="mt-2">
+                              <strong>Comment:</strong> {{ review.review_text }}
                             </v-col>
-                            <!-- Delete Button -->
-                            <v-btn
-                              color="red"
-                              text
-                              @click="deleteReview(review)"
-                              class="mb-2 mx-2"
-                            >
-                              Delete
-                            </v-btn>
+                            <div style="display: flex; align-items: center; gap: 8px">
+                              <strong class="mx-3">Ratings:</strong>
+                              <v-rating
+                                v-model="review.rating"
+                                color="yellow"
+                                half-increments
+                                readonly
+                              ></v-rating>
+                            </div>
                           </v-row>
+                          <v-btn color="red" dark small @click="deleteReview(review)">
+                            Delete
+                          </v-btn>
                           <v-divider class="mt-4"></v-divider>
                         </v-col>
                       </v-row>
@@ -232,27 +290,29 @@
                     </v-card-title>
                     <v-card-text>
                       <v-form ref="addReviewForm" v-model="isFormValid">
+                        <!-- Text Field for Review -->
                         <v-text-field
-                          v-model="newReview.type"
-                          :rules="[rules.required]"
-                          label="Type"
-                          outlined
-                          dense
-                        ></v-text-field>
-                        <v-text-field
-                          v-model="newReview.comment_text"
+                          v-model="newReview.review_text"
                           :rules="[rules.required]"
                           label="Comment"
                           outlined
                           dense
+                          @input="validateForm"
                         ></v-text-field>
-                        <v-text-field
-                          v-model="newReview.tag_name"
-                          :rules="[rules.required]"
-                          label="Tag"
-                          outlined
-                          dense
-                        ></v-text-field>
+
+                        <!-- Rating -->
+                        <div style="display: flex; align-items: center; gap: 8px">
+                          Selected Rating: {{ newReview.rating }}
+                          <v-rating
+                            v-model="newReview.rating"
+                            color="yellow darken-3"
+                            background-color="grey lighten-1"
+                            half-increments
+                            large
+                            :rules="[rules.required]"
+                            @change="validateForm"
+                          ></v-rating>
+                        </div>
                       </v-form>
                     </v-card-text>
                     <v-card-actions>
@@ -273,11 +333,232 @@
                 </v-dialog>
               </v-row>
             </div>
+            <div class="recipe-container mt-5">
+              <v-card-title><h3>Favorites</h3></v-card-title>
+
+              <!-- New Favorites Section -->
+              <template v-if="favoriteRecipes.length">
+                <v-container>
+                  <v-row>
+                    <v-col
+                      v-for="recipe in favoriteRecipes"
+                      :key="recipe.id"
+                      cols="12"
+                      md="10"
+                      lg="6"
+                    >
+                      <!-- Card Code Here -->
+                      <v-card class="pa-4" outlined>
+                        <v-card-text
+                          class="font-weight-bold d-flex align-center justify-space-between"
+                        >
+                          <!-- Heart button in the top-right corner -->
+                          <v-btn
+                            icon
+                            color="red"
+                            class="absolute top-right"
+                            @click="toggleFavorite(recipe)"
+                          >
+                            <v-icon>{{
+                              recipe.isFavorite ? "mdi-heart" : "mdi-heart-outline"
+                            }}</v-icon>
+                          </v-btn>
+                        </v-card-text>
+                        <hr />
+                        <v-card-text class="recipe-card">
+                          <div class="recipe-content mb-4">
+                            <img :src="recipe.image_url" height="200px" width="200px" />
+                          </div>
+                          <h3>{{ recipe.title }}</h3>
+                          <h4 class="text-small">Made by: {{ recipe.userName }}</h4>
+                        </v-card-text>
+
+                        <!-- Two flex buttons -->
+                        <div class="d-flex justify-space-between mt-4 mb-2">
+                          <v-btn
+                            color="green"
+                            dark
+                            style="width: 48%"
+                            @click="openModal(recipe)"
+                          >
+                            View Reviews
+                          </v-btn>
+                          <v-btn
+                            color="blue"
+                            dark
+                            style="width: 48%"
+                            @click="openAddReviewModal(recipe)"
+                          >
+                            Add Review
+                          </v-btn>
+                        </div>
+
+                        <!-- View Details Button -->
+                        <div class="d-flex justify-center">
+                          <v-btn
+                            color="blue"
+                            dark
+                            style="width: 100%"
+                            @click="openDetailsDialog(recipe)"
+                          >
+                            View Details
+                          </v-btn>
+                        </div>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </template>
+
+              <!-- Message if no favorites -->
+              <template v-else>
+                <v-col cols="12" class="text-center">
+                  <p>No favorites added, browse to homepage to search some</p>
+                </v-col>
+              </template>
+
+              <!-- Modal for reviews -->
+              <v-dialog v-model="isModalOpen" max-width="600px">
+                <v-card>
+                  <v-card-title class="font-weight-bold">
+                    Reviews for {{ selectedRecipe?.title }}
+                  </v-card-title>
+                  <v-card-text>
+                    <v-row dense>
+                      <v-col
+                        v-for="review in selectedRecipe?.reviews || []"
+                        :key="review.id"
+                        cols="12"
+                      >
+                        <div class="mb-2">
+                          <strong>{{ review.first_name }} {{ review.first_name }}</strong>
+                        </div>
+                        <v-row>
+                          <v-col cols="12" class="mt-2">
+                            <strong>Comment:</strong> {{ review.review_text }}
+                          </v-col>
+                          <div style="display: flex; align-items: center; gap: 8px">
+                            <strong class="mx-3">Ratings:</strong>
+                            <v-rating
+                              v-model="review.rating"
+                              color="yellow"
+                              half-increments
+                              readonly
+                            ></v-rating>
+                          </div>
+                        </v-row>
+                        <v-btn color="red" dark small @click="deleteReview(review)">
+                          Delete
+                        </v-btn>
+                        <v-divider class="mt-4"></v-divider>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="red" @click="isModalOpen = false">Close</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+              <!-- Dialog for View Details -->
+              <v-dialog v-model="isDetailsDialogOpen" max-width="600px">
+                <v-card class="pa-4">
+                  <!-- Center the image -->
+                  <div class="d-flex justify-center mb-4">
+                    <img
+                      :src="selectedRecipe?.image_url"
+                      alt="Recipe Image"
+                      height="200px"
+                    />
+                  </div>
+                  <v-card-title class="font-weight-bold">
+                    {{ selectedRecipe?.title }}
+                  </v-card-title>
+                  <v-card-text>{{ selectedRecipe?.description }}</v-card-text>
+                  <v-card-text>
+                    <div><strong>Ingredients:</strong></div>
+                    <ul>
+                      <li
+                        v-for="(ingredient, index) in selectedRecipe?.ingredients"
+                        :key="index"
+                      >
+                        {{ ingredient }}
+                      </li>
+                    </ul>
+                    <div><strong>Steps:</strong></div>
+                    <ol>
+                      <li v-for="(step, index) in selectedRecipe?.steps" :key="index">
+                        {{ step }}
+                      </li>
+                    </ol>
+                    <div>
+                      <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
+                    </div>
+                    <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="red" @click="isDetailsDialogOpen = false">
+                      Close
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+              <!-- Modal for adding a review -->
+              <v-dialog v-model="isAddReviewModalOpen" max-width="600px">
+                <v-card>
+                  <v-card-title class="font-weight-bold">
+                    Add Review for {{ selectedRecipe?.title }}
+                  </v-card-title>
+                  <v-card-text>
+                    <v-form ref="addReviewForm" v-model="isFormValid">
+                      <!-- Text Field for Review -->
+                      <v-text-field
+                        v-model="newReview.review_text"
+                        :rules="[rules.required]"
+                        label="Comment"
+                        outlined
+                        dense
+                        @input="validateForm"
+                      ></v-text-field>
+
+                      <!-- Rating -->
+                      <div style="display: flex; align-items: center; gap: 8px">
+                        Selected Rating: {{ newReview.rating }}
+                        <v-rating
+                          v-model="newReview.rating"
+                          color="yellow darken-3"
+                          background-color="grey lighten-1"
+                          half-increments
+                          large
+                          :rules="[rules.required]"
+                          @change="validateForm"
+                        ></v-rating>
+                      </div>
+                    </v-form>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      color="green"
+                      text
+                      :disabled="!isFormValid"
+                      @click="submitReview"
+                    >
+                      Submit
+                    </v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="red" @click="isAddReviewModalOpen = false">
+                      Cancel
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </div>
           </v-col>
         </v-row>
       </v-container>
-
-      <!-- Edit Modal -->
     </v-main>
   </v-app>
 </template>
@@ -289,23 +570,26 @@ export default {
   name: "ProfilePage",
   data() {
     return {
+      recipes: [], // All recipes
+      favoriteRecipes: [], // Fetched favorite recipes
+      filteredRecipes: [], // Displayed recipes (updated dynamically)
+      isDetailsDialogOpen: false, // Tracks if the details dialog is open
       drawer: false,
       isModalOpen: false,
       isAddReviewModalOpen: false,
       selectedRecipe: null,
-      newReview: { type: "", comment_text: "", tag_name: "" },
+      newReview: { review_text: "", rating: 0 },
       isEditModalOpen: false,
       isFormValid: false,
       editData: {
-        fullname: "",
-        phone: "",
+        first_name: "",
+        last_name: "",
       },
       user: {
-        name: "",
-        phone: "",
+        first_name: "",
+        last_name: "",
         email: "",
       },
-      recipes: [],
       dialog: {
         visible: false,
         field: "",
@@ -322,6 +606,10 @@ export default {
       prepTimeOptions: ["< 15 mins", "15-30 mins", "> 30 mins"],
       costOptions: ["< $10", "$10-$20", "> $20"],
       ingredientsOptions: ["< 5 Ingredients", "5-10 Ingredients", "> 10 Ingredients"],
+      selectedRecipe: {
+        reviews: [], // Initialize reviews as an empty array
+        title: "", // Add brand property if used
+      },
     };
   },
 
@@ -362,9 +650,177 @@ export default {
   mounted() {
     this.fetchUserDetails();
     this.fetchRecipes();
+    this.fetchFavoriteRecipes();
+    this.synchronizeFavorites();
+    // Call fetchReviews only if selectedRecipe has a valid recipe_id
+    this.$nextTick(() => {
+      if (this.recipes.length > 0) {
+        this.selectedRecipe = this.recipes[0]; // Default to the first recipe
+        this.fetchReviews(this.selectedRecipe.id); // Pass the ID to fetchReviews
+      } else {
+        console.log("No recipes available to fetch reviews.");
+      }
+    });
   },
 
   methods: {
+    synchronizeFavorites() {
+      if (this.recipes.length && this.favoriteRecipes.length) {
+        this.recipes = this.recipes.map((recipe) => ({
+          ...recipe,
+          isFavorite: this.favoriteRecipes.some((fav) => fav.id === recipe.id),
+        }));
+      }
+    },
+    openDetailsDialog(recipe) {
+      this.selectedRecipe = recipe; // Set the selected recipe
+      this.isDetailsDialogOpen = true; // Open the dialog
+    },
+    async toggleFavorite(recipes) {
+      try {
+        // Step 1: Fetch the logged-in user's session
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+          console.error("Error fetching authenticated user:", authError);
+          alert("Please log in to toggle favorites.");
+          return;
+        }
+
+        console.log("Logged-in user:", user);
+
+        // Step 2: Fetch the user's `users_info` ID
+        const { data: userInfo, error: userInfoError } = await supabase
+          .from("users_info")
+          .select("id")
+          .eq("auth_users_id", user.id)
+          .single();
+
+        if (userInfoError || !userInfo?.id) {
+          console.error("Failed to fetch user info:", userInfoError);
+          alert("Failed to fetch user profile. Please ensure your profile is complete.");
+          return;
+        }
+
+        console.log("Fetched user info ID:", userInfo.id);
+
+        if (recipes.isFavorite) {
+          // Step 3: Remove from favorites
+          const { error: userFavoriteError } = await supabase
+            .from("user_favorites")
+            .delete()
+            .eq("recipe_id", recipes.id)
+            .eq("users_info_id", userInfo.id);
+
+          if (userFavoriteError) {
+            console.error("Error removing favorite:", userFavoriteError);
+            alert("Failed to remove favorite.");
+            return;
+          }
+
+          console.log(`Removed recipe ID ${recipes.id} from favorites.`);
+        } else {
+          // Step 3a: Add to the `favorites` table
+          const { data: favorite, error: favoriteError } = await supabase
+            .from("favorites")
+            .insert({
+              recipe_title: recipes.title, // Correctly reference the recipe title
+            })
+            .select("id") // Return the inserted record's ID
+            .single();
+
+          if (favoriteError || !favorite) {
+            console.error("Error inserting into favorites table:", favoriteError);
+            alert("Failed to add to favorites.");
+            return;
+          }
+
+          console.log("Inserted into favorites table:", favorite.id);
+
+          // Step 3b: Link to `user_favorites`
+          const { error: userFavoriteError } = await supabase
+            .from("user_favorites")
+            .insert({
+              recipe_id: recipes.id,
+              users_info_id: userInfo.id,
+              favorite_id: favorite.id, // Link to the `favorites` table entry
+              created_at: new Date().toISOString(),
+            });
+
+          if (userFavoriteError) {
+            console.error("Error linking favorite to user:", userFavoriteError);
+            alert("Failed to link favorite.");
+            return;
+          }
+
+          console.log(`Linked favorite ID ${favorite.id} to user.`);
+        }
+
+        // Step 4: Toggle favorite state
+        recipes.isFavorite = !recipes.isFavorite;
+
+        alert(
+          recipes.isFavorite
+            ? "Added to favorites successfully!"
+            : "Removed from favorites successfully!"
+        );
+      } catch (error) {
+        console.error("Unexpected error toggling favorite:", error);
+        alert("An unexpected error occurred.");
+      }
+    },
+
+    async fetchFavoriteRecipes() {
+      try {
+        const { data: user, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) throw authError;
+
+        const {
+          data: favoriteRecipes,
+          error: favoriteRecipesError,
+        } = await supabase.from("user_favorites").select(`
+        recipe_id,
+        recipes (
+          id,
+          title,
+          description,
+          ingredients,
+          steps,
+          prep_time,
+          cost,
+          created_at,
+          image_url,
+          users_info (
+            first_name,
+            last_name
+          )
+        )
+      `);
+
+        if (favoriteRecipesError || !favoriteRecipes?.length) {
+          console.warn(
+            "No favorite recipes found or error fetching favorites:",
+            favoriteRecipesError
+          );
+          this.favoriteRecipes = [];
+          return;
+        }
+
+        this.favoriteRecipes = favoriteRecipes.map((fav) => ({
+          ...fav.recipes,
+          isFavorite: true,
+          userName: `${fav.recipes.users_info.first_name} ${fav.recipes.users_info.last_name}`,
+        }));
+
+        console.log("Favorite Recipes Fetched:", this.favoriteRecipes);
+      } catch (error) {
+        console.error("Unexpected error fetching favorite recipes:", error.message);
+        alert("Failed to fetch favorite recipes. Please try again.");
+      }
+    },
     async deleteReview(review) {
       try {
         // Log review ID for debugging
@@ -393,8 +849,8 @@ export default {
     },
     openEditModal() {
       // Populate modal with current user data
-      this.editData.fullname = this.user.name;
-      this.editData.phone = this.user.phone;
+      this.editData.first_name = this.user.first_name;
+      this.editData.last_name = this.user.last_name;
       this.isEditModalOpen = true;
     },
     async saveProfile() {
@@ -403,8 +859,8 @@ export default {
           // Update user info in Supabase
           await this.updateUserInfo(this.editData);
           // Update local user data
-          this.user.name = this.editData.fullname;
-          this.user.phone = this.editData.phone;
+          this.user.first_name = this.editData.first_name;
+          this.user.last_name = this.editData.last_name;
           this.isEditModalOpen = false;
         } catch (error) {
           console.error("Failed to update user info:", error);
@@ -425,10 +881,10 @@ export default {
         const { error } = await supabase
           .from("users_info")
           .update({
-            fullname: data.fullname,
-            phone_number: data.phone,
+            first_name: data.first_name,
+            last_name: data.last_name,
           })
-          .eq("user_id", userId);
+          .eq("auth_users_id", userId);
 
         if (error) {
           throw error;
@@ -445,46 +901,46 @@ export default {
     },
     async fetchRecipes() {
       try {
-        // Step 1: Get the logged-in user's ID from `auth.users`
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
 
         const userId = userData.user.id;
 
-        // Step 2: Fetch `users_info.id` associated with the logged-in user
         const { data: userInfo, error: userInfoError } = await supabase
           .from("users_info")
           .select("id")
-          .eq("user_id", userId)
+          .eq("auth_users_id", userId)
           .single();
 
         if (userInfoError) throw userInfoError;
 
         const usersInfoId = userInfo.id;
 
-        // Step 3: Fetch recipes where `users_info_id` matches the logged-in user's `users_info.id`
         const { data: recipes, error: recipesError } = await supabase
           .from("recipes")
           .select(
             `
-          id,
-          title,
-          description,
-          ingredients,
-          steps,
-          prep_time,
-          cost,
-          users_info (fullname)
-        `
+      id,
+      title,
+      description,
+      ingredients,
+      steps,
+      prep_time,
+      cost,
+      image_url,
+      users_info (first_name, last_name)
+    `
           )
-          .eq("users_info_id", usersInfoId); // Filter by the logged-in user's `users_info_id`
+          .eq("users_info_id", usersInfoId);
 
         if (recipesError) throw recipesError;
 
-        // Step 4: Map the data to include the user's name
         this.recipes = recipes.map((recipe) => ({
           ...recipe,
-          userName: recipe.users_info ? recipe.users_info.fullname : "Unknown User",
+          userName: recipe.users_info
+            ? `${recipe.users_info.first_name} ${recipe.users_info.last_name}`
+            : "Unknown User",
+          isFavorite: false, // Default to false; updated later
         }));
       } catch (error) {
         console.error("Error fetching recipes:", error.message);
@@ -499,22 +955,24 @@ export default {
         } = await supabase.auth.getUser();
         if (userError) throw userError;
 
-        const { data: userDetails, error } = await supabase
+        // Fetch user's first and last name from the users_info table
+        const { data: userDetails, error: userDetailsError } = await supabase
           .from("users_info")
-          .select("fullname, email, phone_number")
-          .eq("user_id", user.id)
+          .select("first_name, last_name")
+          .eq("auth_users_id", user.id)
           .single();
+        if (userDetailsError) throw userDetailsError;
 
-        if (error) throw error;
+        // Assign first and last name
+        this.user.first_name = userDetails.first_name;
+        this.user.last_name = userDetails.last_name;
 
-        this.user.name = userDetails.fullname;
-        this.user.email = userDetails.email;
-        this.user.phone = userDetails.phone_number;
+        // Assign email from auth.users table
+        this.user.email = user.email;
       } catch (error) {
         console.error("Error fetching user details:", error.message);
       }
     },
-
     openModal(recipe) {
       this.selectedRecipe = recipe;
       this.fetchReviews(recipe.id);
@@ -523,36 +981,48 @@ export default {
 
     async fetchReviews(recipeId) {
       try {
+        if (!recipeId) {
+          console.error("Invalid recipeIds provided:", recipeId);
+          this.selectedRecipe.reviews = [];
+          return;
+        }
+
         const { data, error } = await supabase
-          .from("user_ratings")
+          .from("user_reviews")
           .select(
             `
-          id,
-          created_at,
-          ratings_id (
-            type,
-            comment_text,
-            tag_name
-          ),
-          recipe_id (
-            users_info (
-              fullname
-            )
-          )
-        `
+        id,
+        created_at,
+        review_id (
+          review_text,
+          rating
+        ),
+        recipe_id,
+        users_info:users_info_id (
+          first_name,
+          last_name
+        )
+      `
           )
           .eq("recipe_id", recipeId);
 
         if (error) throw error;
 
-        // Map the fetched data
+        if (!data || data.length === 0) {
+          console.log("No reviews found for this recipe.");
+          this.selectedRecipe.reviews = [];
+          return;
+        }
+
+        console.log("Fetched reviews data:", data);
+
         this.selectedRecipe.reviews = data.map((review) => ({
           id: review.id,
           created_at: review.created_at,
-          type: review.ratings_id ? review.ratings_id.type : null,
-          comment_text: review.ratings_id ? review.ratings_id.comment_text : null,
-          tag_name: review.ratings_id ? review.ratings_id.tag_name : null,
-          userName: review.recipe_id?.users_info?.fullname || "Unknown User",
+          review_text: review.review_id?.review_text || "No review text provided",
+          rating: review.review_id?.rating || 0,
+          first_name: review.users_info?.first_name || "Anonymous",
+          last_name: review.users_info?.last_name || "Anonymous",
         }));
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
@@ -560,37 +1030,85 @@ export default {
       }
     },
     openAddReviewModal(recipe) {
-      this.selectedRecipe = recipe;
-      this.isAddReviewModalOpen = true;
+      this.selectedRecipe = recipe; // Store the selected recipe
+      this.isAddReviewModalOpen = true; // Open the modal
     },
-
     async submitReview() {
-      if (this.$refs.addReviewForm.validate()) {
-        try {
-          const { data, error } = await supabase
-            .from("ratings")
-            .insert({
-              type: this.newReview.type,
-              comment_text: this.newReview.comment_text,
-              tag_name: this.newReview.tag_name,
-            })
-            .select("id")
-            .single();
-
-          if (error) throw error;
-
-          await supabase.from("user_ratings").insert({
-            ratings_id: data.id,
-            recipe_id: this.selectedRecipe.id,
-          });
-
-          alert("Added ratings successfully.");
-          this.newReview = { type: "", comment_text: "", tag_name: "" };
-          this.isAddReviewModalOpen = false;
-          this.fetchReviews(this.selectedRecipe.id);
-        } catch (error) {
-          console.error("Error adding review:", error);
+      try {
+        // Ensure a recipe is selected
+        if (!this.selectedRecipe || !this.selectedRecipe.id) {
+          throw new Error("No recipe selected for review.");
         }
+
+        // Ensure the review text and rating are provided
+        if (!this.newReview.review_text || this.newReview.rating <= 0) {
+          throw new Error("Review text and rating are required.");
+        }
+
+        // Get the logged-in user's details
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        if (userError)
+          throw new Error(`Failed to fetch user details: ${userError.message}`);
+        if (!userData || !userData.user || !userData.user.id) {
+          throw new Error("Invalid user data.");
+        }
+
+        const userId = userData.user.id;
+
+        // Fetch `users_info.id` associated with the logged-in user
+        const { data: userInfo, error: userInfoError } = await supabase
+          .from("users_info")
+          .select("id")
+          .eq("auth_users_id", userId)
+          .single();
+        if (userInfoError)
+          throw new Error(`Failed to fetch user info: ${userInfoError.message}`);
+        if (!userInfo || !userInfo.id) {
+          throw new Error("User info not found.");
+        }
+
+        const usersInfoId = userInfo.id;
+
+        // Insert into the "reviews" table
+        const { data: reviewData, error: reviewError } = await supabase
+          .from("reviews")
+          .insert({
+            review_text: this.newReview.review_text,
+            rating: this.newReview.rating,
+            created_at: new Date().toISOString(),
+          })
+          .select("id")
+          .single();
+        if (reviewError)
+          throw new Error(`Failed to insert review: ${reviewError.message}`);
+        if (!reviewData || !reviewData.id) {
+          throw new Error("Review insertion failed.");
+        }
+
+        console.log("Inserted review ID:", reviewData.id);
+
+        // Link the review with the recipe and user in "user_reviews"
+        const { error: userReviewError } = await supabase.from("user_reviews").insert({
+          review_id: reviewData.id,
+          recipe_id: this.selectedRecipe.id,
+          users_info_id: usersInfoId,
+          created_at: new Date().toISOString(),
+        });
+        if (userReviewError)
+          throw new Error(`Failed to link user review: ${userReviewError.message}`);
+
+        // Refresh reviews for the selected recipe after adding
+        await this.fetchReviews(this.selectedRecipe.id);
+
+        // Clear the new review form and close the modal
+        this.newReview = { review_text: "", rating: 0 };
+        this.isAddReviewModalOpen = false;
+
+        // Display success message
+        alert("Review added successfully!");
+      } catch (error) {
+        console.error("Error adding review:", error.message || error);
+        alert("Failed to submit review. Please try again.");
       }
     },
 
@@ -623,7 +1141,7 @@ export default {
         const { data: userInfo, error: userInfoError } = await supabase
           .from("users_info")
           .select("id")
-          .eq("user_id", userId)
+          .eq("auth_users_id", userId)
           .single();
 
         if (userInfoError) throw userInfoError;
@@ -639,7 +1157,7 @@ export default {
 
         // Delete user ratings related to the recipe (no filtering by user_id)
         const { error: ratingsError } = await supabase
-          .from("user_ratings")
+          .from("user_reviews")
           .delete()
           .eq("recipe_id", recipe.id); // Delete ratings associated with this recipe
 
@@ -744,5 +1262,16 @@ export default {
   .text-small {
     font-size: 0.8rem;
   }
+}
+.recipe-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px; /* Optional: Adds space between the image and text */
+}
+
+img {
+  border-radius: 8px; /* Optional: Add rounded corners to the image */
 }
 </style>
