@@ -11,6 +11,7 @@
         backdrop-filter: blur(10px); /* Blur effect */
       "
     >
+      <!-- Fixed -->
       <v-toolbar-title>
         <div class="d-flex align-center">
           <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
