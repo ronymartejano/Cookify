@@ -59,7 +59,7 @@
 
     <v-main
       style="
-        background-image: url('/src/assets/images/log-in-backg.jpg');
+        background-image: url('/src/assets/images/bgunlock.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -246,7 +246,7 @@
                 @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible"
               ></v-text-field>
 
-              <v-btn type="submit" block color="#FDDA0D" class="mt-4"> Register </v-btn>
+              <v-btn type="submit" block color="#E1C16E" class="mt-4"> Register </v-btn>
               <div class="mt-4 text-center">
                 <span>Already have an account? </span>
                 <router-link

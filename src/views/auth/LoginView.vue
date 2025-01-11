@@ -151,7 +151,7 @@ const onFormSubmit = () => {
 
     <v-main
       style="
-        background-image: url('/src/assets/images/log-in-backg.jpg');
+        background-image: url('/src/assets/images/bgunlock.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -240,7 +240,7 @@ const onFormSubmit = () => {
                 class="mt-4"
                 type="submit"
                 block
-                color="#FDDA0D"
+                color="#E1C16E"
                 elevation="2"
                 :loading="formAction.formProcess"
               >

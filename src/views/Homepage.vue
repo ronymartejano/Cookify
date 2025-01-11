@@ -1,7 +1,16 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="#FFF8DC" elevate-on-scroll sticky style="z-index: 20">
+    <v-app-bar
+      app
+      elevate-on-scroll
+      sticky
+      style="
+        z-index: 20;
+        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        backdrop-filter: blur(10px); /* Blur effect */
+      "
+    >
       <v-toolbar-title>
         <div class="d-flex align-center">
           <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
@@ -35,7 +44,18 @@
     </v-app-bar>
 
     <!-- Sidebar Drawer -->
-    <v-navigation-drawer v-model="drawer" app temporary color="#FFF8DC" left>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      temporary
+      style="
+        z-index: 9999;
+        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        backdrop-filter: blur(10px); /* Blur effect */
+        pointer-events: auto; /* Ensures elements are clickable */
+      "
+      left
+    >
       <v-list>
         <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
@@ -50,7 +70,15 @@
     </v-navigation-drawer>
 
     <!-- Main Content -->
-    <v-main>
+    <v-main
+      style="
+        background-image: url('/src/assets/images/bgpreview.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+      "
+    >
       <v-container>
         <v-row dense align="center" class="mb-4">
           <v-col cols="12" md="4">
@@ -63,7 +91,7 @@
               hide-details
             >
               <template #prepend>
-                <v-icon color="green">mdi-magnify</v-icon>
+                <v-icon color="rgba(255, 248, 220, 0.6)">mdi-magnify</v-icon>
               </template>
             </v-text-field>
           </v-col>
@@ -97,7 +125,9 @@
               hide-details
             ></v-select>
           </v-col>
-          <v-btn color="primary" @click="resetFilters"> Reset Filters </v-btn>
+          <v-btn color="rgba(255, 248, 220, 0.6)" @click="resetFilters">
+            Reset Filters
+          </v-btn>
         </v-row>
 
         <!-- Recipe Cards Section -->
@@ -136,11 +166,11 @@
 
               <!-- Two flex buttons -->
               <div class="d-flex justify-space-between mt-4 mb-2">
-                <v-btn color="green" dark style="width: 48%" @click="openModal(recipe)">
+                <v-btn color="#E1C16E" dark style="width: 48%" @click="openModal(recipe)">
                   View Reviews
                 </v-btn>
                 <v-btn
-                  color="blue"
+                  color="#E1C16E"
                   dark
                   style="width: 48%"
                   @click="openAddReviewModal(recipe)"
@@ -152,7 +182,7 @@
               <!-- View Details Button -->
               <div class="d-flex justify-center">
                 <v-btn
-                  color="blue"
+                  color="rgba(255, 248, 220, 0.6)"
                   dark
                   style="width: 100%"
                   @click="openDetailsDialog(recipe)"

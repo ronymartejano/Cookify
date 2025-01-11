@@ -27,3 +27,26 @@ app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 app.mount('#app')
+
+
+router.beforeEach((to, from, next) => {
+  // Show the loader
+  const loader = document.getElementById('loader');
+  if (loader) {
+    loader.classList.remove('hidden', 'fade-out');
+  }
+  next();
+});
+
+router.afterEach(() => {
+  // Hide the loader with a delay
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.classList.add('fade-out');
+      loader.addEventListener('animationend', () => {
+        loader.classList.add('hidden');
+      });
+    }
+  }, 5000); // Adjust delay if necessary
+});

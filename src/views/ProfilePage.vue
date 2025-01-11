@@ -1,7 +1,16 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="#FFF8DC" elevate-on-scroll sticky style="z-index: 20">
+    <v-app-bar
+      app
+      elevate-on-scroll
+      sticky
+      style="
+        z-index: 20;
+        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        backdrop-filter: blur(10px); /* Blur effect */
+      "
+    >
       <v-toolbar-title>
         <div class="d-flex align-center">
           <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
@@ -35,7 +44,18 @@
     </v-app-bar>
 
     <!-- Sidebar Drawer -->
-    <v-navigation-drawer v-model="drawer" app temporary color="#FFF8DC" left>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      temporary
+      style="
+        z-index: 9999;
+        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        backdrop-filter: blur(10px); /* Blur effect */
+        pointer-events: auto; /* Ensures elements are clickable */
+      "
+      left
+    >
       <v-list>
         <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
@@ -50,17 +70,38 @@
     </v-navigation-drawer>
 
     <!-- Page Content -->
-    <v-main>
+    <v-main
+      style="
+        background-image: url('/src/assets/images/bgpreview.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 120vh;
+      "
+    >
       <v-container fluid>
         <v-row class="responsive-height">
-          <!-- Left: Profile Section -->
           <v-col cols="12" md="4" class="profile-section">
             <div class="profile-sidebar">
-              <!-- User Avatar -->
-              <div class="profile-avatar text-center">
-                <v-avatar size="128" color="white">
-                  <v-icon size="128">mdi-account</v-icon>
-                </v-avatar>
+              <!-- User Avatar or Image -->
+              <div class="profile-avatar d-flex justify-center align-center">
+                <template v-if="!user.image_url">
+                  <!-- Default Avatar -->
+                  <v-avatar size="128" color="white">
+                    <v-icon size="128">mdi-account</v-icon>
+                  </v-avatar>
+                </template>
+                <template v-else>
+                  <!-- User Profile Picture -->
+                  <v-img
+                    :src="user.image_url"
+                    alt="Profile Picture"
+                    class="rounded-circle"
+                    max-width="128"
+                    max-height="128"
+                    style="border-radius: 50%; border: 2px solid #ddd"
+                  ></v-img>
+                </template>
               </div>
 
               <!-- User Info -->
@@ -79,7 +120,17 @@
                     </h4>
                   </v-col>
                 </v-row>
-                <v-btn @click="openEditModal"> Edit User Profile </v-btn>
+                <v-btn @click="openEditModal" block> Edit User Profile </v-btn>
+                <v-btn @click="selectImage" block class="mt-2">
+                  Edit Profile Picture
+                </v-btn>
+                <input
+                  type="file"
+                  ref="fileInput"
+                  style="display: none"
+                  accept="image/*"
+                  @change="uploadImage"
+                />
               </div>
 
               <!-- Logout Button -->
@@ -149,7 +200,7 @@
                       <!-- Two flex buttons -->
                       <div class="d-flex justify-space-between mt-4 mb-2">
                         <v-btn
-                          color="green"
+                          color="#E1C16E"
                           dark
                           style="width: 48%"
                           @click="openModal(recipe)"
@@ -157,7 +208,7 @@
                           View Reviews
                         </v-btn>
                         <v-btn
-                          color="blue"
+                          color="#E1C16E"
                           dark
                           style="width: 48%"
                           @click="openAddReviewModal(recipe)"
@@ -169,7 +220,7 @@
                       <!-- View Details Button -->
                       <div class="d-flex justify-center">
                         <v-btn
-                          color="blue"
+                          color="rgba(255, 248, 220, 0.6)"
                           dark
                           style="width: 100%"
                           @click="openDetailsDialog(recipe)"
@@ -376,7 +427,7 @@
                         <!-- Two flex buttons -->
                         <div class="d-flex justify-space-between mt-4 mb-2">
                           <v-btn
-                            color="green"
+                            color="#E1C16E"
                             dark
                             style="width: 48%"
                             @click="openModal(recipe)"
@@ -384,7 +435,7 @@
                             View Reviews
                           </v-btn>
                           <v-btn
-                            color="blue"
+                            color="#E1C16E"
                             dark
                             style="width: 48%"
                             @click="openAddReviewModal(recipe)"
@@ -396,7 +447,7 @@
                         <!-- View Details Button -->
                         <div class="d-flex justify-center">
                           <v-btn
-                            color="blue"
+                            color="rgba(255, 248, 220, 0.6)"
                             dark
                             style="width: 100%"
                             @click="openDetailsDialog(recipe)"
@@ -589,6 +640,7 @@ export default {
         first_name: "",
         last_name: "",
         email: "",
+        image_url: "",
       },
       dialog: {
         visible: false,
@@ -664,6 +716,65 @@ export default {
   },
 
   methods: {
+    selectImage() {
+      // Trigger the file input click event
+      this.$refs.fileInput.click();
+    },
+    async uploadImage(event) {
+      const file = event.target.files[0];
+      if (!file) {
+        console.error("No file selected.");
+        return;
+      }
+
+      const fileName = `${Date.now()}-${file.name}`;
+
+      try {
+        // Step 1: Upload the file to Supabase storage
+        const { data, error } = await supabase.storage
+          .from("recipes_images") // Replace with your bucket name
+          .upload(fileName, file);
+
+        if (error) {
+          console.error("Image upload error:", error.message);
+          throw new Error("Failed to upload image.");
+        }
+
+        // Step 2: Get the public URL of the uploaded file
+        const { data: publicUrlData, error: urlError } = supabase.storage
+          .from("recipes_images")
+          .getPublicUrl(fileName);
+
+        if (urlError) {
+          console.error("Error generating public URL:", urlError.message);
+          throw new Error("Failed to generate image URL.");
+        }
+
+        // Step 3: Update the user's profile image in the database
+        const imageUrl = publicUrlData.publicUrl;
+
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        if (userError) throw userError;
+
+        const userId = userData.user.id;
+
+        const { error: updateError } = await supabase
+          .from("users_info")
+          .update({ image_url: imageUrl })
+          .eq("auth_users_id", userId);
+
+        if (updateError) throw updateError;
+
+        // Update the image_url in the user object locally
+        this.user.image_url = imageUrl;
+
+        alert("Profile picture updated successfully!");
+      } catch (error) {
+        console.error("Error updating profile picture:", error.message);
+        alert("Failed to update profile picture. Please try again.");
+      }
+    },
+
     synchronizeFavorites() {
       if (this.recipes.length && this.favoriteRecipes.length) {
         this.recipes = this.recipes.map((recipe) => ({
@@ -958,7 +1069,7 @@ export default {
         // Fetch user's first and last name from the users_info table
         const { data: userDetails, error: userDetailsError } = await supabase
           .from("users_info")
-          .select("first_name, last_name")
+          .select("first_name, last_name, image_url")
           .eq("auth_users_id", user.id)
           .single();
         if (userDetailsError) throw userDetailsError;
@@ -966,6 +1077,7 @@ export default {
         // Assign first and last name
         this.user.first_name = userDetails.first_name;
         this.user.last_name = userDetails.last_name;
+        this.user.image_url = userDetails.image_url;
 
         // Assign email from auth.users table
         this.user.email = user.email;
@@ -1193,18 +1305,9 @@ export default {
 .profile-info h4 {
   margin: 0;
 }
-.profile-section {
-  background-color: #f4f4f4;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-}
 
 .profile-sidebar {
   width: 100%;
-  padding-top: 100px;
 }
 
 .profile-avatar {
@@ -1225,12 +1328,8 @@ export default {
   scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
-.recipe-section {
-  height: 100%; /* Ensure it takes full column height */
-}
-
 .recipe-container {
-  height: calc(100% - 32px); /* Adjust for padding if necessary */
+  height: 60vh; /* Adjust for padding if necessary */
   overflow-y: auto; /* Enable vertical scrolling */
   padding: 16px; /* Add padding for aesthetics */
   background-color: #fff; /* Optional: Set background for clarity */
@@ -1247,20 +1346,41 @@ export default {
   -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
   scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
-.responsive-height {
-  height: 90vh;
-}
 
-@media (max-width: 600px) {
-  /* Adjust breakpoint as needed */
-  .responsive-height {
-    height: 60vh;
-  }
+@media (min-width: 400px) and (max-width: 700px) {
   .profile-sidebar {
     padding-top: 0px;
   }
   .text-small {
     font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1400px) {
+  .profile-sidebar {
+    padding-top: 100px;
+    max-width: 90%;
+    background-color: #f4f4f4;
+    margin: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    border-radius: 5px; /* Add a border radius */
+  }
+  .recipe-section {
+    max-width: 90%;
+    overflow-y: auto; /* Enable vertical scrolling */
+    border-radius: 10px; /* Add a border radius */
+    padding: 16px; /* Optional: Add padding */
+    background-color: none; /* Optional: Set a background color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visuals */
+  }
+
+  .profile-section {
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 .recipe-content {

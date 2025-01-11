@@ -1,7 +1,16 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="#FFF8DC" elevate-on-scroll sticky style="z-index: 20">
+    <v-app-bar
+      app
+      elevate-on-scroll
+      sticky
+      style="
+        z-index: 20;
+        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        backdrop-filter: blur(10px); /* Blur effect */
+      "
+    >
       <v-toolbar-title>
         <div class="d-flex align-center">
           <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
@@ -35,7 +44,18 @@
     </v-app-bar>
 
     <!-- Sidebar Drawer -->
-    <v-navigation-drawer v-model="drawer" app temporary color="#FFF8DC" left>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      temporary
+      style="
+        z-index: 9999;
+        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        backdrop-filter: blur(10px); /* Blur effect */
+        pointer-events: auto; /* Ensures elements are clickable */
+      "
+      left
+    >
       <v-list>
         <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
@@ -50,12 +70,23 @@
     </v-navigation-drawer>
 
     <!-- Page Content -->
-    <v-main>
+    <v-main
+      style="
+        background-image: url('/src/assets/images/bgpreview.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+      "
+    >
       <v-container>
-        <h1 class="text-h5 display-2 text-center font-weight-bold mb-2">
+        <h1
+          class="text-h5 display-2 text-center font-weight-bold mb-2"
+          style="color: black"
+        >
           Share your own recipe too.
         </h1>
-        <p class="text-center mb-5">
+        <p class="text-center mb-5" style="color: black">
           Add and create recipes on your own and share it with others!
         </p>
 
@@ -67,6 +98,12 @@
             :rules="[rules.required]"
             outlined
             dense
+            style="
+              background-color: rgba(255, 248, 220, 0.6);
+              color: black;
+              border-radius: 8px;
+              margin-bottom: 5px;
+            "
           ></v-text-field>
 
           <v-textarea
@@ -75,11 +112,17 @@
             :rules="[rules.required]"
             outlined
             dense
+            style="
+              background-color: rgba(255, 248, 220, 0.6);
+              color: black;
+              border-radius: 8px;
+              margin-bottom: 5px;
+            "
           ></v-textarea>
 
           <!-- Ingredients Section -->
           <div class="mb-4">
-            <strong>Ingredients:</strong>
+            <strong style="color: black">Ingredients:</strong>
             <v-row dense>
               <v-col cols="10" lg="11">
                 <v-text-field
@@ -87,13 +130,19 @@
                   v-model="newIngredient"
                   outlined
                   dense
+                  style="
+                    background-color: rgba(255, 248, 220, 0.6);
+                    color: black;
+                    border-radius: 8px;
+                  "
                 ></v-text-field>
               </v-col>
               <v-col cols="2" lg="1">
                 <v-btn
-                  :color="newIngredient ? 'yellow' : '#FFFFF0'"
+                  :color="newIngredient ? 'yellow darken-2' : '#FFFFF0'"
                   :disabled="!newIngredient"
                   @click="addIngredient"
+                  style="color: black; border-radius: 8px"
                 >
                   Add
                 </v-btn>
@@ -117,7 +166,7 @@
 
           <!-- Steps Section -->
           <div class="mb-4">
-            <strong>Steps:</strong>
+            <strong style="color: black">Steps:</strong>
             <v-row dense>
               <v-col cols="10" lg="11">
                 <v-text-field
@@ -125,13 +174,19 @@
                   v-model="newStep"
                   outlined
                   dense
+                  style="
+                    background-color: rgba(255, 248, 220, 0.6);
+                    color: black;
+                    border-radius: 8px;
+                  "
                 ></v-text-field>
               </v-col>
               <v-col cols="2" lg="1">
                 <v-btn
-                  :color="newStep ? 'yellow' : '#FFFFF0'"
+                  :color="newStep ? 'yellow darken-2' : '#FFFFF0'"
                   :disabled="!newStep"
                   @click="addStep"
+                  style="color: black; border-radius: 8px"
                 >
                   Add
                 </v-btn>
@@ -161,6 +216,12 @@
             :rules="[rules.required]"
             outlined
             dense
+            style="
+              background-color: rgba(255, 248, 220, 0.6);
+              color: black;
+              border-radius: 8px;
+              margin-bottom: 5px;
+            "
           ></v-file-input>
 
           <v-text-field
@@ -169,6 +230,12 @@
             :rules="[rules.required]"
             outlined
             dense
+            style="
+              background-color: rgba(255, 248, 220, 0.6);
+              color: black;
+              border-radius: 8px;
+              margin-bottom: 5px;
+            "
           ></v-text-field>
 
           <v-text-field
@@ -178,12 +245,19 @@
             outlined
             dense
             type="number"
+            style="
+              background-color: rgba(255, 248, 220, 0.6);
+              color: black;
+              border-radius: 8px;
+              margin-bottom: 5px;
+            "
           ></v-text-field>
 
           <v-btn
-            :color="isFormValid ? 'yellow' : '#FFFFF0'"
+            :color="isFormValid ? 'yellow darken-2' : '#FFFFF0'"
             type="submit"
             :disabled="!isFormValid"
+            style="color: black; border-radius: 8px"
           >
             Add Recipe
           </v-btn>
