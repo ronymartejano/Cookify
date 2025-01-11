@@ -16,7 +16,7 @@
           <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
           <span
             class="font-weight-bold"
-            style="color: #3e4e3a; margin-left: 8px; font-size: 0.9rem"
+            style="color: #86736a; margin-left: 8px; font-size: 0.9rem"
           >
             CooKify
           </span>

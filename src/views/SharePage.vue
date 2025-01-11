@@ -7,17 +7,17 @@
       sticky
       style="
         z-index: 20;
-        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        background-color: rgb(232, 220, 196, 0.8);
         backdrop-filter: blur(10px); /* Blur effect */
       "
     >
       <v-toolbar-title>
         <div class="d-flex align-center">
-          <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
+          <v-icon size="24" color="rgba(124, 93, 76, 0.8)">mdi-cookie-outline</v-icon>
           <span
             class="font-weight-bold"
             style="
-              color: black;
+              color: white;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;
@@ -31,10 +31,10 @@
       <v-spacer></v-spacer>
 
       <!-- Show buttons for larger screens -->
-      <div class="d-none d-md-flex">
+      <div class="d-none d-md-flex text-white">
         <v-btn text to="/homepage">Home</v-btn>
         <v-btn text to="/profile">Profile</v-btn>
-        <v-btn text to="/share">Share</v-btn>
+        <v-btn text to="/sharepage">Share</v-btn>
       </div>
 
       <!-- Hamburger menu for smaller screens -->
@@ -50,20 +50,20 @@
       temporary
       style="
         z-index: 9999;
-        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        background-color: rgb(232, 220, 196, 0.8);
         backdrop-filter: blur(10px); /* Blur effect */
         pointer-events: auto; /* Ensures elements are clickable */
       "
       left
     >
-      <v-list>
+      <v-list class="text-white">
         <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
         <v-list-item to="/profile">
           <v-list-item-title>Profile</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/share">
+        <v-list-item to="/sharepage">
           <v-list-item-title>Share</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -99,7 +99,7 @@
             outlined
             dense
             style="
-              background-color: rgba(255, 248, 220, 0.6);
+              background-color: white;
               color: black;
               border-radius: 8px;
               margin-bottom: 5px;
@@ -113,7 +113,7 @@
             outlined
             dense
             style="
-              background-color: rgba(255, 248, 220, 0.6);
+              background-color: white;
               color: black;
               border-radius: 8px;
               margin-bottom: 5px;
@@ -121,20 +121,24 @@
           ></v-textarea>
 
           <!-- Ingredients Section -->
-          <div class="mb-4">
-            <strong style="color: black">Ingredients:</strong>
-            <v-row dense>
+          <div class="mb-4 mt-4">
+            <strong
+              style="
+                color: black;
+                background-color: white;
+                padding: 3px;
+                border-radius: 3px;
+              "
+              >Ingredients:</strong
+            >
+            <v-row dense class="mt-2">
               <v-col cols="10" lg="11">
                 <v-text-field
                   label="Enter ingredient"
                   v-model="newIngredient"
                   outlined
                   dense
-                  style="
-                    background-color: rgba(255, 248, 220, 0.6);
-                    color: black;
-                    border-radius: 8px;
-                  "
+                  style="background-color: white; color: black; border-radius: 8px"
                 ></v-text-field>
               </v-col>
               <v-col cols="2" lg="1">
@@ -166,19 +170,23 @@
 
           <!-- Steps Section -->
           <div class="mb-4">
-            <strong style="color: black">Steps:</strong>
-            <v-row dense>
+            <strong
+              style="
+                color: black;
+                background-color: white;
+                padding: 3px;
+                border-radius: 3px;
+              "
+              >Steps:</strong
+            >
+            <v-row dense class="mt-2">
               <v-col cols="10" lg="11">
                 <v-text-field
                   label="Enter step"
                   v-model="newStep"
                   outlined
                   dense
-                  style="
-                    background-color: rgba(255, 248, 220, 0.6);
-                    color: black;
-                    border-radius: 8px;
-                  "
+                  style="background-color: white; color: black; border-radius: 8px"
                 ></v-text-field>
               </v-col>
               <v-col cols="2" lg="1">
@@ -217,7 +225,7 @@
             outlined
             dense
             style="
-              background-color: rgba(255, 248, 220, 0.6);
+              background-color: white;
               color: black;
               border-radius: 8px;
               margin-bottom: 5px;
@@ -231,7 +239,7 @@
             outlined
             dense
             style="
-              background-color: rgba(255, 248, 220, 0.6);
+              background-color: white;
               color: black;
               border-radius: 8px;
               margin-bottom: 5px;
@@ -246,7 +254,7 @@
             dense
             type="number"
             style="
-              background-color: rgba(255, 248, 220, 0.6);
+              background-color: white;
               color: black;
               border-radius: 8px;
               margin-bottom: 5px;

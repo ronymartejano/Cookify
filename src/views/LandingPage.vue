@@ -83,7 +83,13 @@
         minHeight: '100vh',
       }"
     >
-      <v-container>
+      <v-container
+        style="
+          background-color: rgba(255, 255, 255, 0.9);
+          border-radius: 4px;
+          margin-top: 10px;
+        "
+      >
         <v-row>
           <v-col cols="12">
             <v-toolbar-title class="text-center" style="width: 100%">
@@ -210,6 +216,6 @@ p,
 h3,
 span,
 h1 {
-  color: white !important;
+  color: #86736a !important;
 }
 </style>

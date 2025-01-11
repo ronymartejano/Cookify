@@ -105,7 +105,7 @@ const onFormSubmit = () => {
           <span
             class="font-weight-bold"
             style="
-              color: #3e4e3a;
+              color: #86736a;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;

@@ -17,7 +17,7 @@
           <span
             class="font-weight-bold"
             style="
-              color: white;
+              color: #86736a;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;
@@ -213,11 +213,12 @@
         background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
         backdrop-filter: blur(10px); /* Blur effect */
         z-index: 10;
+        color: #86736a;
       "
     >
       <v-container>
-        <v-row justify="space-between" align="center">
-          <v-col cols="12" md="4" class="text-black text-center text-md-left">
+        <v-row justify="space-between" align="center" style="color: #86736a">
+          <v-col cols="12" md="4" class="text-center text-md-left">
             <p>&copy; {{ new Date().getFullYear() }} CooKify. All Rights Reserved.</p>
           </v-col>
           <v-col cols="12" md="4" class="text-center">
@@ -225,7 +226,7 @@
             <v-icon color="black" class="mx-3">mdi-twitter</v-icon>
             <v-icon color="black">mdi-instagram</v-icon>
           </v-col>
-          <v-col cols="12" md="4" class="text-black text-center text-md-right">
+          <v-col cols="12" md="4" class="text-center text-md-right">
             <p>Privacy Policy | Terms of Service</p>
           </v-col>
         </v-row>
@@ -235,7 +236,7 @@
 </template>
 
 <script>
-import bgImage from "@/assets/images/bgpreview.jpg";
+import bgImage from "@/assets/images/bgunlock.jpg";
 
 export default {
   data() {

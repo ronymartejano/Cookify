@@ -7,18 +7,17 @@
       sticky
       style="
         z-index: 20;
-        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        background-color: rgb(232, 220, 196, 0.8);
         backdrop-filter: blur(10px); /* Blur effect */
       "
     >
-      <!-- Fixed -->
       <v-toolbar-title>
         <div class="d-flex align-center">
-          <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
+          <v-icon size="24" color="rgba(124, 93, 76, 0.8)">mdi-cookie-outline</v-icon>
           <span
             class="font-weight-bold"
             style="
-              color: black;
+              color: white;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;
@@ -32,7 +31,7 @@
       <v-spacer></v-spacer>
 
       <!-- Show buttons for larger screens -->
-      <div class="d-none d-md-flex">
+      <div class="d-none d-md-flex text-white">
         <v-btn text to="/homepage">Home</v-btn>
         <v-btn text to="/profile">Profile</v-btn>
         <v-btn text to="/sharepage">Share</v-btn>
@@ -51,13 +50,13 @@
       temporary
       style="
         z-index: 9999;
-        background-color: rgba(255, 248, 220, 0.6); /* Transparent background */
+        background-color: rgb(232, 220, 196, 0.8);
         backdrop-filter: blur(10px); /* Blur effect */
         pointer-events: auto; /* Ensures elements are clickable */
       "
       left
     >
-      <v-list>
+      <v-list class="text-white">
         <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
@@ -140,18 +139,22 @@
             md="18"
             lg="4"
           >
-            <v-card class="pa-4" outlined>
+            <v-card
+              class="pa-4"
+              outlined
+              style="background-color: rgb(232, 220, 196, 0.95)"
+            >
               <v-card-text
                 class="font-weight-bold d-flex align-center justify-space-between"
               >
                 <!-- Heart button in the top-right corner -->
                 <v-btn
                   icon
-                  color="red"
+                  color="#7c5d46"
                   class="absolute top-right"
                   @click="toggleFavorite(recipe)"
                 >
-                  <v-icon>{{
+                  <v-icon class="text-white">{{
                     recipe.isFavorite ? "mdi-heart" : "mdi-heart-outline"
                   }}</v-icon>
                 </v-btn>
@@ -1017,7 +1020,7 @@ export default {
   height: calc(100% - 32px); /* Adjust for padding if necessary */
   overflow-y: auto; /* Enable vertical scrolling */
   padding: 16px; /* Add padding for aesthetics */
-  background-color: #fff; /* Optional: Set background for clarity */
+  background-color: rgb(232, 220, 196, 0.95);
   border-radius: 8px; /* Optional: Rounded edges */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
 }
