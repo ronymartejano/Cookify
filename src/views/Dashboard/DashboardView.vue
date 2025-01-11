@@ -1,21 +1,21 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="#c8e6c9" elevate-on-scroll sticky style="z-index: 20">
+    <v-app-bar app color="#FFF8DC" elevate-on-scroll sticky style="z-index: 20">
       <v-toolbar-title>
         <div class="d-flex align-center">
-          <v-icon size="24" color="green">mdi-leaf</v-icon>
+          <v-icon size="24" color="#FFBF00">mdi-cookie-outline</v-icon>
           <span
             class="font-weight-bold"
             style="
-              color: #3e4e3a;
+              color: black;
               margin-left: 8px;
               font-size: 0.9rem;
               white-space: normal;
               overflow: visible;
             "
           >
-            Campus Nourish
+            CooKify
           </span>
         </div>
       </v-toolbar-title>
@@ -25,7 +25,7 @@
       <div class="d-none d-md-flex">
         <v-btn text to="/homepage">Home</v-btn>
         <v-btn text to="/profile">Profile</v-btn>
-        <v-btn text to="/share">Share</v-btn>
+        <v-btn text to="/sharepage">Share</v-btn>
       </div>
 
       <!-- Hamburger menu for smaller screens -->
@@ -35,7 +35,7 @@
     </v-app-bar>
 
     <!-- Sidebar Drawer -->
-    <v-navigation-drawer v-model="drawer" app temporary color="#c8e6c9" left>
+    <v-navigation-drawer v-model="drawer" app temporary color="#FFF8DC" left>
       <v-list>
         <v-list-item to="/homepage">
           <v-list-item-title>Home</v-list-item-title>
@@ -43,7 +43,7 @@
         <v-list-item to="/profile">
           <v-list-item-title>Profile</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/share">
+        <v-list-item to="/sharepage">
           <v-list-item-title>Share</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -118,6 +118,7 @@
           <!-- Right: Recipe Section -->
           <v-col cols="12" md="8" class="recipe-section">
             <div class="recipe-container">
+              <v-card-title><h3>Posts</h3></v-card-title>
               <v-row dense>
                 <v-col
                   v-for="recipe in filteredRecipes"
@@ -158,16 +159,84 @@
                       <h4 class="text-small">Made by: {{ recipe.userName }}</h4>
                     </v-card-text>
 
-                    <div class="d-flex justify-space-evenly mt-4">
-                      <v-btn color="green" dark @click="openModal(recipe)">
+                    <!-- Two flex buttons -->
+                    <div class="d-flex justify-space-between mt-4 mb-2">
+                      <v-btn
+                        color="green"
+                        dark
+                        style="width: 48%"
+                        @click="openModal(recipe)"
+                      >
                         View Reviews
                       </v-btn>
-                      <v-btn color="blue" dark @click="openAddReviewModal(recipe)">
+                      <v-btn
+                        color="blue"
+                        dark
+                        style="width: 48%"
+                        @click="openAddReviewModal(recipe)"
+                      >
                         Add Review
+                      </v-btn>
+                    </div>
+
+                    <!-- View Details Button -->
+                    <div class="d-flex justify-center">
+                      <v-btn
+                        color="blue"
+                        dark
+                        style="width: 100%"
+                        @click="openDetailsDialog(recipe)"
+                      >
+                        View Details
                       </v-btn>
                     </div>
                   </v-card>
                 </v-col>
+
+                <!-- Dialog for View Details -->
+                <v-dialog v-model="isDetailsDialogOpen" max-width="600px">
+                  <v-card class="pa-4">
+                    <!-- Center the image -->
+                    <div class="d-flex justify-center mb-4">
+                      <img
+                        :src="selectedRecipe?.image_url"
+                        alt="Recipe Image"
+                        height="200px"
+                      />
+                    </div>
+                    <v-card-title class="font-weight-bold">
+                      {{ selectedRecipe?.title }}
+                    </v-card-title>
+                    <v-card-text>{{ selectedRecipe?.description }}</v-card-text>
+                    <v-card-text>
+                      <div><strong>Ingredients:</strong></div>
+                      <ul>
+                        <li
+                          v-for="(ingredient, index) in selectedRecipe?.ingredients"
+                          :key="index"
+                        >
+                          {{ ingredient }}
+                        </li>
+                      </ul>
+                      <div><strong>Steps:</strong></div>
+                      <ol>
+                        <li v-for="(step, index) in selectedRecipe?.steps" :key="index">
+                          {{ step }}
+                        </li>
+                      </ol>
+                      <div>
+                        <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
+                      </div>
+                      <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="red" @click="isDetailsDialogOpen = false">
+                        Close
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
 
                 <!-- Modal for reviews -->
                 <v-dialog v-model="isModalOpen" max-width="600px">
@@ -266,6 +335,232 @@
                 </v-dialog>
               </v-row>
             </div>
+            <div class="recipe-container mt-5">
+              <v-card-title><h3>Favorites</h3></v-card-title>
+              <v-row dense>
+                <!-- Check if there are any favorite recipes -->
+                <template v-if="filteredRecipes.some((recipe) => recipe.isFavorite)">
+                  <v-col
+                    v-for="recipe in filteredRecipes.filter(
+                      (recipe) => recipe.isFavorite
+                    )"
+                    :key="recipe.id"
+                    cols="12"
+                    md="10"
+                    lg="6"
+                  >
+                    <v-card class="pa-4" outlined>
+                      <v-card-text
+                        class="font-weight-bold d-flex align-center justify-space-between"
+                      >
+                        <v-btn color="red" dark small @click="deleteRecipe(recipe)">
+                          <v-icon>mdi-trash-can-outline</v-icon>
+                        </v-btn>
+                        <!-- Heart button in the top-right corner -->
+                        <v-btn
+                          icon
+                          color="red"
+                          class="absolute top-right"
+                          @click="toggleFavorite(recipe)"
+                        >
+                          <v-icon>{{
+                            recipe.isFavorite ? "mdi-heart" : "mdi-heart-outline"
+                          }}</v-icon>
+                        </v-btn>
+                      </v-card-text>
+                      <hr />
+                      <v-card-text class="recipe-card">
+                        <div class="recipe-content mb-4">
+                          <img :src="recipe.image_url" height="200px" width="200px" />
+                        </div>
+                        <h3>{{ recipe.title }}</h3>
+                        <h4 class="text-small">Made by: {{ recipe.userName }}</h4>
+                      </v-card-text>
+
+                      <!-- Two flex buttons -->
+                      <div class="d-flex justify-space-between mt-4 mb-2">
+                        <v-btn
+                          color="green"
+                          dark
+                          style="width: 48%"
+                          @click="openModal(recipe)"
+                        >
+                          View Reviews
+                        </v-btn>
+                        <v-btn
+                          color="blue"
+                          dark
+                          style="width: 48%"
+                          @click="openAddReviewModal(recipe)"
+                        >
+                          Add Review
+                        </v-btn>
+                      </div>
+
+                      <!-- View Details Button -->
+                      <div class="d-flex justify-center">
+                        <v-btn
+                          color="blue"
+                          dark
+                          style="width: 100%"
+                          @click="openDetailsDialog(recipe)"
+                        >
+                          View Details
+                        </v-btn>
+                      </div>
+                    </v-card>
+                  </v-col>
+                </template>
+
+                <!-- Display a message if no favorite recipes exist -->
+                <template v-else>
+                  <v-col cols="12" class="text-center">
+                    <p>No favorites added, browse to homepage to search some</p>
+                  </v-col>
+                </template>
+
+                <!-- Modal for reviews -->
+                <v-dialog v-model="isModalOpen" max-width="600px">
+                  <v-card>
+                    <v-card-title class="font-weight-bold">
+                      Reviews for {{ selectedRecipe?.title }}
+                    </v-card-title>
+                    <v-card-text>
+                      <v-row dense>
+                        <v-col
+                          v-for="review in selectedRecipe?.reviews || []"
+                          :key="review.id"
+                          cols="12"
+                        >
+                          <div class="mb-2">
+                            <strong
+                              >{{ review.first_name }} {{ review.first_name }}</strong
+                            >
+                          </div>
+                          <v-row>
+                            <v-col cols="12" class="mt-2">
+                              <strong>Comment:</strong> {{ review.review_text }}
+                            </v-col>
+                            <div style="display: flex; align-items: center; gap: 8px">
+                              <strong class="mx-3">Ratings:</strong>
+                              <v-rating
+                                v-model="review.rating"
+                                color="yellow"
+                                half-increments
+                                readonly
+                              ></v-rating>
+                            </div>
+                          </v-row>
+                          <v-btn color="red" dark small @click="deleteReview(review)">
+                            Delete
+                          </v-btn>
+                          <v-divider class="mt-4"></v-divider>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="red" @click="isModalOpen = false">Close</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+
+                <!-- Dialog for View Details -->
+                <v-dialog v-model="isDetailsDialogOpen" max-width="600px">
+                  <v-card class="pa-4">
+                    <!-- Center the image -->
+                    <div class="d-flex justify-center mb-4">
+                      <img
+                        :src="selectedRecipe?.image_url"
+                        alt="Recipe Image"
+                        height="200px"
+                      />
+                    </div>
+                    <v-card-title class="font-weight-bold">
+                      {{ selectedRecipe?.title }}
+                    </v-card-title>
+                    <v-card-text>{{ selectedRecipe?.description }}</v-card-text>
+                    <v-card-text>
+                      <div><strong>Ingredients:</strong></div>
+                      <ul>
+                        <li
+                          v-for="(ingredient, index) in selectedRecipe?.ingredients"
+                          :key="index"
+                        >
+                          {{ ingredient }}
+                        </li>
+                      </ul>
+                      <div><strong>Steps:</strong></div>
+                      <ol>
+                        <li v-for="(step, index) in selectedRecipe?.steps" :key="index">
+                          {{ step }}
+                        </li>
+                      </ol>
+                      <div>
+                        <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
+                      </div>
+                      <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="red" @click="isDetailsDialogOpen = false">
+                        Close
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+
+                <!-- Modal for adding a review -->
+                <v-dialog v-model="isAddReviewModalOpen" max-width="600px">
+                  <v-card>
+                    <v-card-title class="font-weight-bold">
+                      Add Review for {{ selectedRecipe?.title }}
+                    </v-card-title>
+                    <v-card-text>
+                      <v-form ref="addReviewForm" v-model="isFormValid">
+                        <!-- Text Field for Review -->
+                        <v-text-field
+                          v-model="newReview.review_text"
+                          :rules="[rules.required]"
+                          label="Comment"
+                          outlined
+                          dense
+                          @input="validateForm"
+                        ></v-text-field>
+
+                        <!-- Rating -->
+                        <div style="display: flex; align-items: center; gap: 8px">
+                          Selected Rating: {{ newReview.rating }}
+                          <v-rating
+                            v-model="newReview.rating"
+                            color="yellow darken-3"
+                            background-color="grey lighten-1"
+                            half-increments
+                            large
+                            :rules="[rules.required]"
+                            @change="validateForm"
+                          ></v-rating>
+                        </div>
+                      </v-form>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-btn
+                        color="green"
+                        text
+                        :disabled="!isFormValid"
+                        @click="submitReview"
+                      >
+                        Submit
+                      </v-btn>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="red" @click="isAddReviewModalOpen = false">
+                        Cancel
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-row>
+            </div>
           </v-col>
         </v-row>
       </v-container>
@@ -280,6 +575,7 @@ export default {
   name: "ProfilePage",
   data() {
     return {
+      isDetailsDialogOpen: false, // Tracks if the details dialog is open
       drawer: false,
       isModalOpen: false,
       isAddReviewModalOpen: false,
@@ -371,6 +667,10 @@ export default {
   },
 
   methods: {
+    openDetailsDialog(recipe) {
+      this.selectedRecipe = recipe; // Set the selected recipe
+      this.isDetailsDialogOpen = true; // Open the dialog
+    },
     async toggleFavorite(recipes) {
       try {
         // Step 1: Fetch the logged-in user's session
@@ -597,10 +897,10 @@ export default {
         const { error } = await supabase
           .from("users_info")
           .update({
-            fullname: data.fullname,
-            phone_number: data.phone,
+            first_name: data.first_name,
+            last_name: data.last_name,
           })
-          .eq("user_id", userId);
+          .eq("auth_users_id", userId);
 
         if (error) {
           throw error;
