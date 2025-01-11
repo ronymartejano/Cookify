@@ -52,29 +52,46 @@ const router = createRouter({
   ],
 })
 
-
 router.beforeEach(async (to, from, next) => {
+  // Show the loader
+  const loader = document.getElementById('loader');
+  if (loader) {
+    loader.classList.remove('hidden', 'fade-out');
+  }
+
   const { data: { user } } = await supabase.auth.getUser(); // Check if user is logged in
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-      // Route requires authentication
-      if (!user) {
-          console.log("Redirecting to /login (authentication required)");
-          return next("/login");
-      }
+    // Route requires authentication
+    if (!user) {
+      console.log("Redirecting to /login (authentication required)");
+      return next("/login");
+    }
   } else {
-      // Routes accessible without authentication
-      if (user && ["/", "/about", "/login", "/register"].includes(to.path)) {
-          console.log("Redirecting to /home (user is logged in)");
-          return next("/profile");
-      } else if (!user && to.path === "/butnotregisteredpath") {
-          console.log("Redirecting to / (unauthenticated user on restricted path)");
-          return next("/");
-      }
+    // Routes accessible without authentication
+    if (user && ["/", "/about", "/login", "/register"].includes(to.path)) {
+      console.log("Redirecting to /profile (user is logged in)");
+      return next("/profile");
+    } else if (!user && to.path === "/butnotregisteredpath") {
+      console.log("Redirecting to / (unauthenticated user on restricted path)");
+      return next("/");
+    }
   }
 
   next(); // Proceed to the requested route
 });
 
+router.afterEach(() => {
+  // Hide the loader with a delay
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.classList.add('fade-out');
+      loader.addEventListener('animationend', () => {
+        loader.classList.add('hidden');
+      });
+    }
+  }, 3000); // Adjust the delay if necessary
+});
 
 export default router

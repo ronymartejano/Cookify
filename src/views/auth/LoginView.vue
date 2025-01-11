@@ -1,3 +1,14 @@
+<script>
+import bgImage from "@/assets/images/bgunlock.jpg";
+export default {
+  data() {
+    return {
+      bgImage,
+    };
+  },
+};
+</script>
+
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -35,6 +46,7 @@ const formAction = ref({
 });
 
 // Handle Login
+// Handle Login
 const handleLogin = async () => {
   // Start processing
   formAction.value = {
@@ -54,7 +66,7 @@ const handleLogin = async () => {
       formAction.value.formErrorMessage = error.message || "Invalid login credentials.";
     } else if (data) {
       formAction.value.formSuccessMessage = "Login successful! Redirecting...";
-      setTimeout(() => router.push({ name: "dashboard" }), 1500);
+      setTimeout(() => router.push({ name: "homepage" }), 1500); // Redirect to 'homepage'
     }
   } catch {
     formAction.value.formErrorMessage = "An error occurred. Please try again later.";
@@ -150,13 +162,13 @@ const onFormSubmit = () => {
     </v-navigation-drawer>
 
     <v-main
-      style="
-        background-image: url('@/src/assets/images/bgunlock.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-      "
+      :style="{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }"
     >
       <v-container
         class="fill-height"

@@ -71,13 +71,13 @@
 
     <!-- Page Content -->
     <v-main
-      style="
-        background-image: url('@/src/assets/images/bgpreview.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 120vh;
-      "
+      :style="{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }"
     >
       <v-container fluid>
         <v-row class="responsive-height">
@@ -616,11 +616,13 @@
 
 <script>
 import { supabase } from "@/utils/supabase";
+import bgImage from "@/assets/images/bgpreview.jpg";
 
 export default {
   name: "ProfilePage",
   data() {
     return {
+      bgImage,
       recipes: [], // All recipes
       favoriteRecipes: [], // Fetched favorite recipes
       filteredRecipes: [], // Displayed recipes (updated dynamically)

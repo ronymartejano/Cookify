@@ -75,13 +75,13 @@
 
     <!-- Page Content -->
     <v-main
-      style="
-        background-image: url('@/src/assets/images/bgunlock.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-      "
+      :style="{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }"
     >
       <v-container>
         <v-row>
@@ -187,9 +187,12 @@
 </template>
 
 <script>
+import bgImage from "@/assets/images/bgunlock.jpg";
+
 export default {
   data() {
     return {
+      bgImage,
       drawer: false, // Controls the sidebar drawer visibility
     };
   },

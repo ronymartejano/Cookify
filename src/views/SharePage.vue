@@ -71,13 +71,13 @@
 
     <!-- Page Content -->
     <v-main
-      style="
-        background-image: url('@/src/assets/images/bgpreview.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-      "
+      :style="{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }"
     >
       <v-container>
         <h1
@@ -269,11 +269,13 @@
 
 <script>
 import { supabase } from "@/utils/supabase";
+import bgImage from "@/assets/images/bgpreview.jpg";
 
 export default {
   name: "SharePage",
   data() {
     return {
+      bgImage,
       newRecipe: {
         title: "",
         description: "",

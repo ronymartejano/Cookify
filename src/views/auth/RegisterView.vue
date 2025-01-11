@@ -58,13 +58,13 @@
     </v-navigation-drawer>
 
     <v-main
-      style="
-        background-image: url('@/src/assets/images/bgunlock.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-      "
+      :style="{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }"
     >
       <v-container
         class="fill-height"
@@ -273,6 +273,8 @@ import { useDisplay } from "vuetify";
 import cookifyImage from "@/assets/images/cookifybr2.png";
 import { supabase } from "@/utils/supabase";
 import AlertNotification from "@/components/common/AlertNotification.vue";
+import bgImage from "@/assets/images/bgunlock.jpg"; // Import the image
+
 import {
   requiredValidator,
   emailValidator,
@@ -383,5 +385,15 @@ const onFormSubmit = async () => {
     formAction.value.formErrorMessage =
       "Please correct the errors in the form before submitting.";
   }
+};
+</script>
+<script>
+import bgImage from "@/assets/images/bgunlock.jpg";
+export default {
+  data() {
+    return {
+      bgImage,
+    };
+  },
 };
 </script>

@@ -71,13 +71,13 @@
 
     <!-- Main Content -->
     <v-main
-      style="
-        background-image: url('@/src/assets/images/bgpreview.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-      "
+      :style="{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }"
     >
       <v-container>
         <v-row dense align="center" class="mb-4">
@@ -344,11 +344,13 @@
 
 <script>
 import { supabase } from "@/utils/supabase";
+import bgImage from "@/assets/images/bgpreview.jpg";
 
 export default {
   name: "ProfilePage",
   data() {
     return {
+      bgImage,
       isDetailsDialogOpen: false, // Tracks if the details dialog is open
       drawer: false,
       isModalOpen: false,
