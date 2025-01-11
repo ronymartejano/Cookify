@@ -72,7 +72,7 @@ router.beforeEach(async (to, from, next) => {
     if (user && ["/", "/about", "/login", "/register"].includes(to.path)) {
       console.log("Redirecting to /profile (user is logged in)");
       return next("/profile");
-    } else if (!user && to.path === "/butnotregisteredpath") {
+    } else if (!user && to.path === "/") {
       console.log("Redirecting to / (unauthenticated user on restricted path)");
       return next("/");
     }
