@@ -223,7 +223,7 @@
                 <div>
                   <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
                 </div>
-                <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
+                <div><strong>Cost:</strong> ₱{{ selectedRecipe?.cost }}</div>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -384,7 +384,7 @@ export default {
       costFilter: null,
       ingredientsFilter: null,
       prepTimeOptions: ["< 15 mins", "15-30 mins", "> 30 mins"],
-      costOptions: ["< $100", "$101-$200", "> $201"],
+      costOptions: ["< ₱100", "₱101-₱200", "> ₱201"],
       ingredientsOptions: ["< 5 Ingredients", "5-10 Ingredients", "> 10 Ingredients"],
       selectedRecipe: {
         reviews: [], // Initialize reviews as an empty array
@@ -408,9 +408,9 @@ export default {
 
         const matchesCost =
           !this.costFilter ||
-          (this.costFilter === "< $100" && recipe.cost < 100) ||
-          (this.costFilter === "$101-$200" && recipe.cost >= 101 && recipe.cost <= 200) ||
-          (this.costFilter === "> $201" && recipe.cost > 201);
+          (this.costFilter === "< ₱100" && recipe.cost < 100) ||
+          (this.costFilter === "₱101-₱200" && recipe.cost >= 101 && recipe.cost <= 200) ||
+          (this.costFilter === "> ₱201" && recipe.cost > 201);
 
         const matchesIngredients =
           !this.ingredientsFilter ||

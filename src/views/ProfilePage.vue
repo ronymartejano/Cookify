@@ -276,7 +276,7 @@
                       <div>
                         <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
                       </div>
-                      <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
+                      <div><strong>Cost:</strong> ₱{{ selectedRecipe?.cost }}</div>
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
@@ -546,7 +546,7 @@
                     <div>
                       <strong>Preparation Time:</strong> {{ selectedRecipe?.prep_time }}
                     </div>
-                    <div><strong>Cost:</strong> ${{ selectedRecipe?.cost }}</div>
+                    <div><strong>Cost:</strong> ₱{{ selectedRecipe?.cost }}</div>
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
@@ -658,7 +658,7 @@ export default {
       costFilter: null,
       ingredientsFilter: null,
       prepTimeOptions: ["< 15 mins", "15-30 mins", "> 30 mins"],
-      costOptions: ["< $10", "$10-$20", "> $20"],
+      costOptions: ["< ₱10", "$10-$20", "> $20"],
       ingredientsOptions: ["< 5 Ingredients", "5-10 Ingredients", "> 10 Ingredients"],
       selectedRecipe: {
         reviews: [], // Initialize reviews as an empty array
